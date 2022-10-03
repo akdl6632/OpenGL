@@ -44,10 +44,11 @@ struct Tri {
 };
 
 struct Tricolor {
-	GLfloat r, g, b;
+	GLfloat colors[3][3];
 };
 
 struct Tri tri[4];
+struct Tri tri2[4];
 struct Tricolor color[4];
 
 GLuint vao, vbo[2];
@@ -84,10 +85,10 @@ void main(int argc, char** argv)
 	glewExperimental = GL_TRUE;
 	glewInit();
 
-	InitShader();
-	InitBuffer();
 	InitTri();
 	InitColor();
+	InitShader();
+	InitBuffer();
 	
 	glutDisplayFunc(drawScene);        //--- 출력 콜백 함수
 	glutReshapeFunc(Reshape);
@@ -144,7 +145,7 @@ void InitBuffer()
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 
-	glBufferData(GL_ARRAY_BUFFER, 4 * 9 * sizeof(GLfloat), tri, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(GLfloat), tri, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	
@@ -152,7 +153,7 @@ void InitBuffer()
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
 
-	glBufferData(GL_ARRAY_BUFFER, 4 * 9 * sizeof(GLfloat), color, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(GLfloat), color, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	
@@ -198,7 +199,7 @@ GLvoid drawScene()                                                             /
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// 
-	//glUseProgram(s_program); // 여기서 오류남
+	//glUseProgram(s_program);
 	//glBindVertexArray(VAO);
 	Use();
 	//glBindVertexArray(VAO);
@@ -275,6 +276,16 @@ void InitTri()
 	tri[0].triShape[2][1] = -0.3;
 	tri[0].triShape[2][2] = 0.0;
 
+	tri2[0].triShape[0][0] = 0.5;
+	tri2[0].triShape[0][1] = -0.8;
+	tri2[0].triShape[0][2] = 0.0;
+	tri2[0].triShape[1][0] = 0.8;
+	tri2[0].triShape[1][1] = -0.8;
+	tri2[0].triShape[1][2] = 0.0;
+	tri2[0].triShape[2][0] = 0.65;
+	tri2[0].triShape[2][1] = -0.3;
+	tri2[0].triShape[2][2] = 0.0;
+
 	tri[1].triShape[0][0] = 0.5;
 	tri[1].triShape[0][1] = -0.8;
 	tri[1].triShape[0][2] = 0.0;
@@ -308,21 +319,54 @@ void InitTri()
 
 void InitColor()
 {
-	color[0].r = 1.0f;
-	color[0].g = 0.0f;
-	color[0].b = 0.0f;
+	color[0].colors[0][0] = 1.0f;
+	color[0].colors[0][1] = 0.0f;
+	color[0].colors[0][2] = 0.0f;
 
-	color[1].r = 0.0f;
-	color[1].g = 1.0f;
-	color[1].b = 0.0f;
+	color[0].colors[1][0] = 0.0f;
+	color[0].colors[1][1] = 0.0f;
+	color[0].colors[1][2] = 0.0f;
 
-	color[2].r = 0.0f;
-	color[2].g = 0.0f;
-	color[2].b = 1.0f;
+	color[0].colors[2][0] = 0.0f;
+	color[0].colors[2][1] = 0.0f;
+	color[0].colors[2][2] = 0.0f;
 
-	color[3].r = 0.5f;
-	color[3].g = 0.5f;
-	color[3].b = 0.5f;
+	color[1].colors[0][0] = 0.0f;
+	color[1].colors[0][1] = 0.0f;
+	color[1].colors[0][2] = 0.0f;
+
+	color[1].colors[1][0] = 0.0f;
+	color[1].colors[1][1] = 1.0f;
+	color[1].colors[1][2] = 0.0f;
+
+	color[1].colors[2][0] = 0.0f;
+	color[1].colors[2][1] = 0.0f;
+	color[1].colors[2][2] = 0.0f;
+
+	color[2].colors[0][0] = 0.0f;
+	color[2].colors[0][1] = 0.0f;
+	color[2].colors[0][2] = 0.0f;
+
+	color[2].colors[1][0] = 0.0f;
+	color[2].colors[1][1] = 0.0f;
+	color[2].colors[1][2] = 0.0f;
+
+	color[2].colors[2][0] = 0.0f;
+	color[2].colors[2][1] = 0.0f;
+	color[2].colors[2][2] = 1.0f;
+
+	color[3].colors[0][0] = 0.5f;
+	color[3].colors[0][1] = 0.0f;
+	color[3].colors[0][2] = 0.0f;
+
+	color[3].colors[1][0] = 0.0f;
+	color[3].colors[1][1] = 0.5f;
+	color[3].colors[1][2] = 0.0f;
+
+	color[3].colors[2][0] = 0.0f;
+	color[3].colors[2][1] = 0.0f;
+	color[3].colors[2][2] = 0.5f;
+
 }
 
 GLvoid Keyboard(unsigned char key, int x, int y)
@@ -351,9 +395,16 @@ GLvoid Mouse(int button, int state, int x, int y)
 GLvoid Motion(int x, int y)
 {
 	DtoOD(x, y, &ox, &oy); // x, y좌표를 OpenGL 좌표로 변경
+	if (left_button == true)
+	{
+
+	}
 }
 
 void DtoOD(int x, int y, float* ox, float* oy)
 {
-
+	int w = width;
+	int h = height;
+	*ox = (float)((x - (float)w / 2.0) * (float)(1.0 / (float)(w / 2.0)));
+	*oy = -(float)((y - (float)h / 2.0) * (float)(1.0 / (float)(h / 2.0)));
 }
